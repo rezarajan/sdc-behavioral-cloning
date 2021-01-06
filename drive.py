@@ -16,6 +16,8 @@ from tensorflow.keras.models import load_model
 import h5py
 from tensorflow.keras import __version__ as keras_version
 
+import cv2
+
 sio = socketio.Server()
 app = Flask(__name__)
 model = None
@@ -48,6 +50,20 @@ set_speed = 9
 controller.set_desired(set_speed)
 
 
+scale_percent = 25 # percent of original size
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+def preprocess(image):
+    width = int(image.shape[1] * scale_percent / 100)
+    height = int(image.shape[0] * scale_percent / 100)
+    dim = (width, height)
+    normalized = image.copy()
+    normalized[:,:,0] = clahe.apply(normalized[:,:,0])
+    normalized[:,:,1] = clahe.apply(normalized[:,:,1])
+    normalized[:,:,2] = clahe.apply(normalized[:,:,2])
+    grayscale = cv2.cvtColor(normalized, cv2.COLOR_RGB2GRAY)
+    downscaled = cv2.resize(grayscale, dim, interpolation=cv2.INTER_AREA)
+    return downscaled
+
 @sio.on('telemetry')
 def telemetry(sid, data):
     if data:
@@ -61,13 +77,15 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
-        steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+        img = preprocess(image_array)
+        # steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+        steering_angle = float(model.predict(np.expand_dims(img, [0,3]), batch_size=1))
 
         throttle = controller.update(float(speed))
 
         # print(image)
         print('TELEMETRY\n')
-        print(steering_angle, throttle)
+        # print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
         # save frame
