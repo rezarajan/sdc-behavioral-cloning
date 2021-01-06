@@ -12,9 +12,9 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import h5py
-from keras import __version__ as keras_version
+from tensorflow.keras import __version__ as keras_version
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -65,6 +65,8 @@ def telemetry(sid, data):
 
         throttle = controller.update(float(speed))
 
+        # print(image)
+        print('TELEMETRY\n')
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
@@ -113,7 +115,7 @@ if __name__ == '__main__':
     # check that model Keras version is same as local Keras version
     f = h5py.File(args.model, mode='r')
     model_version = f.attrs.get('keras_version')
-    keras_version = str(keras_version).encode('utf8')
+    # keras_version = str(keras_version).encode('utf8')
 
     if model_version != keras_version:
         print('You are using Keras version ', keras_version,
@@ -131,9 +133,11 @@ if __name__ == '__main__':
         print("RECORDING THIS RUN ...")
     else:
         print("NOT RECORDING THIS RUN ...")
+    # print('Hello')
 
     # wrap Flask application with engineio's middleware
     app = socketio.Middleware(sio, app)
+    # print('Hello')
 
     # deploy as an eventlet WSGI server
     eventlet.wsgi.server(eventlet.listen(('', 4567)), app)
