@@ -50,7 +50,7 @@ set_speed = 9
 controller.set_desired(set_speed)
 
 
-scale_percent = 25 # percent of original size
+scale_percent = 80 # percent of original size
 clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
 def preprocess(image):
     width = int(image.shape[1] * scale_percent / 100)
@@ -85,7 +85,7 @@ def telemetry(sid, data):
 
         # print(image)
         print('TELEMETRY\n')
-        # print(steering_angle, throttle)
+        print(steering_angle, throttle)
         send_control(steering_angle, throttle)
 
         # save frame
