@@ -45,6 +45,7 @@ My project includes the following files:
 * drive.py for driving the car in autonomous mode
 * model.h5 containing a trained convolution neural network 
 * report.md summarizing the results
+* output_video.mp4 for both track 1 and track 2, showcasing autonomous runs. These videos can be found under the *recordings/track\*/* folder, for each respective track.
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
@@ -105,6 +106,8 @@ Aside from image normalization in the Lambda layer, all training data is pre-pro
 * Contrast Limited Adaptive Histogram Equalization (CLAHE): reduces the effect of lighting changes in the model
 * Grayscaling: from testing, color images do not necessarily improve model performance, and grayscaling helps to reduce model size
 * Image scaling: to further reduce model size (and the number of parameters to train) the image is downscaled, while maintaining its aspect ratio
+
+These filters are also added to the drive.py file to process each frame before model prediction.
 
 ---
 #### 2. Attempts to reduce overfitting in the model
