@@ -24,7 +24,13 @@ The goals / steps of this project are the following:
 [image4]: ./report_files/dirt_maneuver.jpg "Differentiating Roads from Dirt"
 [image5]: ./report_files/edge_maneuver.jpg "Maneuvering from Edges"
 [image6]: ./report_files/post_maneuver.jpg "Steering Away from Posts"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[gif1]: ./report_files/return_to_lane.gif "Returning to Lane"
+[gif2]: ./report_files/bridge.gif "Lane Keeping on Bridge"
+[gif3]: ./report_files/dirt_road.gif "Distinguishing Road from Dirt"
+[gif4]: ./report_files/lane_keeping.gif "Lane Keeping"
+[gif5]: ./report_files/hairpin_offset.gif "Re-adjusting for a Hairpin Turn"
+[gif6]: ./report_files/hairpin_hard.gif "Re-adjusting for a Very Tight Hairpin Turn"
+[gif7]: ./report_files/curved_lane_keeping.gif "Lane Keeping on a Curved Road"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -238,6 +244,51 @@ The above images show some scenarios in which the initial model struggles, and w
 After data collection, the data is [processed](#15-image-preprocessing) and [fed into the model](#1-solution-design-approach) as mentioned previously.
 
 ---
-## Results
+### Results
 
 Below are some scenarios in which the fine-tuned model is displaced from its original path. The scenarios show the ability of the model to correct itself and resume driving.
+
+![gif1]
+
+The above animation shows the car returning to the right side of the unmarked track when displaced.
+
+![gif2]
+
+The above animation shows the car re-aligning itself when displaced on the bridge.
+
+![gif3]
+
+The above animation shows how the model properly differentiates the road from the dirt, even when pushed closer to it.
+
+![gif4]
+
+The above animation shows how the model can properly distinguish between a left and right lane - and it finds the right lane when displaced.
+
+![gif5]
+
+The above animation shows that the model can find the right lane even around a sharp turn.
+
+![gif6]
+
+The above animation shows how the model can find the right lane around a tight hairpin turn - and it adjusts its steering accordingly to not run off the edge.
+
+![gif7]
+
+The above animation shows the model finding the right lane around an uphill turn.
+
+---
+
+### Recommendations
+
+While the model completes tracks 1 and 2, and exhibits some level of understanding for driving by keeping to the right lane, there are still areas in which it makes unexpected decisions and veers into the oncoming lane. The following are recommended for further testing and improving the model:
+
+* Gather driving data from different simulated environments
+* Create a more equitable distribution of steering angles for the training data
+* Improve steering angle offset for the left and right camera angles
+* Use a joystick for smoother turns
+* Utilize other image augmentation techniques to generate more data which the model may generalize upon
+
+---
+### Conclusions
+
+A deep learning network has been successfully designed, trained and implemented in a simulation in which it drives a car across two different tracks, without deviating from the road. The robustness of the model to external deviations or unfamiliar scenarios is also showcased, and recommedations are provided for further testing and improvement.
