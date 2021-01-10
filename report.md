@@ -24,6 +24,7 @@ The goals / steps of this project are the following:
 [image4]: ./report_files/dirt_maneuver.jpg "Differentiating Roads from Dirt"
 [image5]: ./report_files/edge_maneuver.jpg "Maneuvering from Edges"
 [image6]: ./report_files/post_maneuver.jpg "Steering Away from Posts"
+<!-- [diag1]: ./report_files/neural_net.svg "Neural Network Architecture" -->
 [gif1]: ./report_files/return_to_lane.gif "Returning to Lane"
 [gif2]: ./report_files/bridge.gif "Lane Keeping on Bridge"
 [gif3]: ./report_files/dirt_road.gif "Distinguishing Road from Dirt"
@@ -67,6 +68,9 @@ The general structure of the model used in this project is similar to the NVIDIA
 * Smaller fully-connected layers
 * Two dropout layers and
 * Only 1 output for steering angle
+
+<img src='./report_files/neural_net.svg' title='Neural Network Architecture' height=500/>
+
 _________________________________________________________________
 |Layer (type)                 |Output Shape         |     Param #|   
 |-----------------------------|---------------------|------------|
@@ -208,7 +212,7 @@ This model is now able to complete both tracks 1 and 2 without deviating from th
 ---
 #### 2. Final Model Architecture
 
-The final model architecture is the same as what had been started with as seen [previously](#model-architecture-and-training-strategy). At the end of training the most notable difference that resulted in success is the dataset used, which goes to show how robust convolutional neural nets can be.
+The final model architecture is the same as the inital model seen [previously](#model-architecture-and-training-strategy). At the end of training the most notable difference that resulted in success is the dataset used, which goes to show how robust convolutional neural nets can be.
 
 ---
 #### 3. Creation of the Training Set & Training Process
