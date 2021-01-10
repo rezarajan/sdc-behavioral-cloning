@@ -92,6 +92,7 @@ The model also includes RELU activations to introduce nonlinearity, and dropouts
 
 Details of the model architecture may be found in the "Model Architecture" section of the Jupyter notebook. 
 
+---
 #### 1.5 Image Preprocessing
 Aside from image normalization in the Lambda layer, all training data is pre-processed using the following methods:
 
@@ -99,6 +100,7 @@ Aside from image normalization in the Lambda layer, all training data is pre-pro
 * Grayscaling: from testing, color images do not necessarily improve model performance, and grayscaling helps to reduce model size
 * Image scaling: to further reduce model size (and the number of parameters to train) the image is downscaled, while maintaining its aspect ratio
 
+---
 #### 2. Attempts to reduce overfitting in the model
 
 As previously mentioned, the model uses two dropout layers to reduce overfitting. Specifically, the first dropout layer has a dropout rate of 0.25, and the second 0.50, following the filter-type structure.
@@ -109,6 +111,7 @@ Ultimately, the evaluation of model generalization can be tested by running it o
 
 Model overfitting during training is also observed using a stopper, where the loss metric is evaluated after each epoch, to ensure that a minimum difference between the current and previous loss values are met. If not, then after a set number of attempts (called patience), the training is stopped. This ensures that the loss is always decreasing, and training stops when it does not, to avoid overfitting.
 
+---
 #### 3. Model parameter tuning
 
 Parameters such as layer shapes, convolution kernel sizes and dropout rates are tuned based on:
@@ -118,6 +121,8 @@ Parameters such as layer shapes, convolution kernel sizes and dropout rates are 
 3. Simlated tests of the model on the track
 
 The optimizer used is the adam optimizer, and therefore learning rate is not specified.
+
+---
 #### 4. Appropriate training data
 
 Training data is chosen with the following principles in mind:
@@ -133,6 +138,7 @@ Below is a visualization of the distribution of data based on steering angles:
  
  The distribution appears to be centered around the 0.0 steering angle, with positive and negative steering angles similarly distributed. The inequitable distribution of smaller steering angles to the extremes may introduce bias in the trained model, but to preserve data these are not removed.
 
+---
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
@@ -146,10 +152,13 @@ The primary basis of model design follows from the success of the previously men
 * Introduce non-linearities through RELU activations
 * Introduce dropout layers to reduce overfitting
 
+---
+
 **Generators:**
 
 During training, generators are used to reduce the memory overhead required to load the training and validation datasets. In fact, without using generators to load and process images on-the-fly, the model cannot be trained due to memory overflow.
 
+---
 
 **Training:**
 
@@ -161,6 +170,7 @@ Training was performed using the following parameters:
 * Stopper: 
   * Mininim loss delta: 0.0003
   * Patience: 5
+* Validation Split: 0.20
 
 Note that the loss metric is on the training set, and not the validation set. This is because in practice, the model actually underfits the training set, i.e. the training set has a consistently higher loss than the validation set. Initial attempts used the validation set as a loss metric, but the resulting model did not produce as desirable of results as is hoped. Furthermore, it is observed that using the training set loss did not negatively affect the validation set loss.
 
@@ -169,6 +179,8 @@ Below is a visualization of the model's loss after each epoch:
 ![image2]
 
 Training is stopped after 25 epochs, by the stopper, which is approximately at the point the training and validation sets have similar losses. This is suitable as it prevents overfitting the data, while allowing the model to train enough such that it also does not underfit.
+
+---
 
 **Fine-Tuning:**
 
@@ -184,11 +196,12 @@ The above graph also indicates model underfitting. In this case, however, the va
 
 This model is now able to complete both tracks 1 and 2 without deviating from the road, while, for the most part, staying in lane in track 2. Furthermore, on track 1 it tends to stick to the right part of road, though it is unmarked.
 
-
+---
 #### 2. Final Model Architecture
 
 The final model architecture is the same as what had been started with as seen [previously](#model-architecture-and-training-strategy). At the end of training the most notable difference that resulted in success is the dataset used, which goes to show how robust convolutional neural nets can be.
 
+---
 #### 3. Creation of the Training Set & Training Process
 
 As noted previously, the performance of the model depends more on the quality of data rather than on the intricacies model. Therefore, capturing high-quality data involves the following:
@@ -210,16 +223,21 @@ Some examples of data acquisition are shown below:
 
 ![image4]
 
+The above image shows the car driving near dirt, which in some cases depending on the angle of approach, the initial model mistakes as a road.
+
 ![image5]
+
+The above image shows the car driving near an edge, where the intial model would sometimes drive off in sharp turns. Here, the initial model is drawn towards the posts, causing it to understeer.
 
 ![image6]
 
+As an additional training scenario, the model is trained on a straight road to avoid the posts, which, as previously mentioned, it is drawn toward.
 
-Etc ....
+The above images show some scenarios in which the initial model struggles, and which have been used to fine-tune the model.
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+After data collection, the data is [processed](#15-image-preprocessing) and [fed into the model](#1-solution-design-approach) as mentioned previously.
 
+---
+## Results
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+Below are some scenarios in which the fine-tuned model is displaced from its original path. The scenarios show the ability of the model to correct itself and resume driving.
