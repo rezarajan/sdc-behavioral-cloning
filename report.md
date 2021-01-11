@@ -1,8 +1,5 @@
 # **Behavioral Cloning** 
-
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
+## Author: Reza Rajan
 
 ---
 
@@ -62,12 +59,14 @@ The behavioral_cloning.ipynb Jupyter notebook contains the code for training and
 
 #### 1. An appropriate model architecture has been employed
 
-The general structure of the model used in this project is similar to the NVIDIA's [model](https://developer.nvidia.com/blog/deep-learning-self-driving-cars/), but uses:
+The general structure of the model used in this project is similar to NVIDIA's [model](https://developer.nvidia.com/blog/deep-learning-self-driving-cars/), but uses:
 
 * Max-Pooling after each convolution layer
 * Smaller fully-connected layers
 * Two dropout layers and
 * Only 1 output for steering angle
+
+A visualization of the network's structure is shown below:
 
 <img src='./report_files/neural_net.svg' title='Neural Network Architecture' height=500/>
 
@@ -99,13 +98,13 @@ _________________________________________________________________
 
 The methodology of this model follows a funnel-type structure, where information is gradually filtered. Therefore, the model starts with larger convolutions with filter size 5, to filter for larger features of each frame. Subsequently, smaller convolution filters of size 3 are used to capture more granular, but important details of the frame.
 
-The model also includes RELU activations to introduce nonlinearity, and dropouts to reduce overfitting. Furthermore, data is normalized in the first layer of the model, using a Lambda layer.
+The model also includes RELU activations to introduce nonlinearity, and dropouts to reduce overfitting. Furthermore, data is normalized in the first layer of the model, using a Lambda layer, and cropped using a cropping layer.
 
 Details of the model architecture may be found in the "Model Architecture" section of the Jupyter notebook. 
 
 ---
 #### 1.5 Image Preprocessing
-Aside from image normalization in the Lambda layer, all training data is pre-processed using the following methods:
+Aside from image normalization in the Lambda layer, and cropping in the cropping layer all training data is pre-processed using the following methods:
 
 * Contrast Limited Adaptive Histogram Equalization (CLAHE): reduces the effect of lighting changes in the model
 * Grayscaling: from testing, color images do not necessarily improve model performance, and grayscaling helps to reduce model size
@@ -118,9 +117,9 @@ These filters are also added to the drive.py file to process each frame before m
 
 As previously mentioned, the model uses two dropout layers to reduce overfitting. Specifically, the first dropout layer has a dropout rate of 0.25, and the second 0.50, following the filter-type structure.
 
-Furthermore, the data is suffled on each epoch, and separated into training and validation sets to ensure that it is not fitting to any particular subset of the data.
+Furthermore, the data is shuffled on each epoch, and separated into training and validation sets to ensure that it is not overfitting to any particular subset of the data.
 
-Ultimately, the evaluation of model generalization can be tested by running it on different tracks, i.e. in different environments. Therefore, the model is also trained and tested on data from track 2.
+Ultimately, the evaluation of model generalization can be tested by running it on different tracks, i.e. in different environments. Therefore, the model is trained and tested on data from both tracks 1 and 2.
 
 Model overfitting during training is also observed using a stopper, where the loss metric is evaluated after each epoch, to ensure that a minimum difference between the current and previous loss values are met. If not, then after a set number of attempts (called patience), the training is stopped. This ensures that the loss is always decreasing, and training stops when it does not, to avoid overfitting.
 
@@ -175,7 +174,7 @@ During training, generators are used to reduce the memory overhead required to l
 
 **Training:**
 
-Training was performed using the following parameters:
+Training is performed using the following parameters:
 
 * Batch Size: 512
 * Epochs: 30
@@ -185,19 +184,19 @@ Training was performed using the following parameters:
   * Patience: 5
 * Validation Split: 0.20
 
-Note that the loss metric is on the training set, and not the validation set. This is because in practice, the model actually underfits the training set, i.e. the training set has a consistently higher loss than the validation set. Initial attempts used the validation set as a loss metric, but the resulting model did not produce as desirable of results as is hoped. Furthermore, it is observed that using the training set loss did not negatively affect the validation set loss.
+Note that the loss metric is on the training set, and not the validation set. This is because in practice, the model actually underfits the training set, i.e. the training set has a consistently higher loss than the validation set. Initial attempts used the validation set as a loss metric, but the resulting model did not produce desirable results. Furthermore, it is observed that using the training set loss did not negatively affect the validation set loss.
 
 Below is a visualization of the model's loss after each epoch:
 
 ![image2]
 
-Training is stopped after 25 epochs, by the stopper, which is approximately at the point the training and validation sets have similar losses. This is suitable as it prevents overfitting the data, while allowing the model to train enough such that it also does not underfit.
+Training is stopped after 25 epochs by the stopper, which is approximately at the point the training and validation sets have similar losses. This is suitable as it prevents overfitting the data, while allowing the model to train enough such that it also does not underfit.
 
 ---
 
 **Fine-Tuning:**
 
-After training the model is tested on tracks 1 and 2. For the most part, it completes track 1 at this point, but it does make some unexpected deviations at certain corners. Furthermore on track 2, it fails to complete major hairpin turns, as the car understeers. When it goes off-track it also struggles to maneuver back in certain points of track 2. Therefore, it is clear that the model needs to be trained on more data pertaining to turning tight corners, as well as in cases where it needs to maneuver back on track.
+After training, the model is tested on tracks 1 and 2. For the most part, it completes track 1 at this point, but it does make some unexpected deviations at certain corners. Furthermore on track 2, it fails to complete some hairpin turns, as the car understeers. At certain points in track 2, when it goes off-track it also struggles to maneuver back onto the road. Therefore, it is clear that the model needs to be trained on more data pertaining to turning tight corners, as well as in cases where it needs to maneuver back on track.
 
 However, due to time constraints, it is not feasible to re-train the model from scratch. Therefore, the previously trained model is trained on more data pertaining to the previously mentioned scenarios, assuming the initial weights are closer than if it were to be re-initialized.
 
@@ -212,7 +211,7 @@ This model is now able to complete both tracks 1 and 2 without deviating from th
 ---
 #### 2. Final Model Architecture
 
-The final model architecture is the same as the inital model seen [previously](#model-architecture-and-training-strategy). At the end of training the most notable difference that resulted in success is the dataset used, which goes to show how robust convolutional neural nets can be.
+The final model architecture is the same as the inital model described [previously](#model-architecture-and-training-strategy). At the end of training the most notable difference that resulted in success is the dataset used, which goes to show how robust convolutional neural nets can be, and how important it is to collect quality data.
 
 ---
 #### 3. Creation of the Training Set & Training Process
@@ -228,7 +227,7 @@ Twenty-three (23) recording sessions are captured to properly address each of th
 
 As a baseline the car is driven around the tracks once. Then, since track 1 has a notable left-turn bias, it is driven around the track in the opposite direction. The same is done for track 2, but in this case it is driven in reverse to account for the downhill bias. 
 
-In all sessions, three images are captured: a left, center and right camera image. This is done to increase the quantity of data captured, as is required for training neural networks. The steering angles are adjusted for the left and right images to account for the offset.
+In all sessions, three images are captured: a left, center and right camera image. This is done to increase the quantity of data captured, as is required for proper training of neural networks. The steering angles are adjusted for the left and right images to account for the offset.
 
 Augmentations are not performed on the dataset, though this may be an area for improvement. Image flips have been tested, with adjusted steering angles, but in testing this has proven to reduce model performance in simulation; driving the track in reverse seemed to yield better results.
 
@@ -240,7 +239,7 @@ The above image shows the car driving near dirt, which in some cases depending o
 
 ![image5]
 
-The above image shows the car driving near an edge, where the intial model would sometimes drive off in sharp turns. Here, the initial model is drawn towards the posts, causing it to understeer.
+The above image shows the car driving near an edge, where the intial model would sometimes drive off the edge in sharp turns. Here, the initial model is drawn towards the posts, causing it to understeer.
 
 ![image6]
 
@@ -287,7 +286,7 @@ The above animation shows the model finding the right lane around an uphill turn
 
 ### Recommendations
 
-While the model completes tracks 1 and 2, and exhibits some level of understanding for driving by keeping to the right lane, there are still areas in which it makes unexpected decisions and veers into the oncoming lane. The following are recommended for further testing and improving the model:
+While the model completes tracks 1 and 2, and exhibits some level of understanding for driving by keeping to the right lane, there are still areas in which it makes unexpected decisions and veers into the oncoming lane. The following are recommended for further testing and imrpovement of the model:
 
 * Gather driving data from different simulated environments
 * Create a more equitable distribution of steering angles for the training data
